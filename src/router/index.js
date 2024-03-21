@@ -3,14 +3,15 @@
 // import Layout from "@/pages/Layout";
 import Login from "@/pages/Login";
 import App from "@/pages/Layout/App";
-import MainBookstore from "@/components/main_bookstore";
-import MainSupport from "@/components/main_support";
+import MainBookstore from "@/pages/Layout/bookstore";
+import MainSupport from "@/pages/Layout/support";
 
 import { createBrowserRouter } from "react-router-dom";
 import { AuthRoute } from "@/components/AuthRoute";
-import MainAccount from "@/components/main_account";
-import MainCart from "@/components/main_cart";
-import MainParcel from "@/components/main_parcel";
+import AccountPage from "@/pages/Layout/account";
+import MainCart from "@/pages/Layout/cart";
+import MainParcel from "@/pages/Layout/parcel";
+import BookInfo from "@/pages/Layout/bookInfo";
 
 //配置路由实例
 
@@ -26,11 +27,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <MainBookstore/>
+        element: <MainBookstore />,
       },
       {
         path: "account",
-        element: <MainAccount/>
+        element: <AccountPage />,
       },
       {
         path: "bookstore",
@@ -38,15 +39,19 @@ const router = createBrowserRouter([
       },
       {
         path: "cart",
-        element: <MainCart/>
+        element: <MainCart />,
       },
       {
         path: "parcel",
-        element: <MainParcel/>
+        element: <MainParcel />,
       },
       {
         path: "support",
         element: <MainSupport />,
+      },
+      {
+        path: "bookstore/:id",
+        element: <BookInfo />,
       },
     ],
   },

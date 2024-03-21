@@ -1,11 +1,9 @@
-import "./App.css";
-
 import React, { useEffect } from "react";
 import Header from "../../components/header.js";
 import Aside from "../../components/aside.js";
 import { Outlet } from "react-router-dom";
 import { fetchUserInfo } from "@/store/modules/user";
-import { UseDispatch, useDispatch, useSelector } from "react-redux";
+import {  useDispatch, useSelector } from "react-redux";
 
 function App() {
 
@@ -17,8 +15,7 @@ function App() {
   const name = useSelector(state => state.user.userInfo.name);
 
   return (
-    <div className="App h-screen w-screen flex flex-col">
-      <span>{name}</span>
+    <div className="bg-home bg-no-repeat bg-cover h-screen w-screen flex flex-col">
       <Header />
       <div className="flex-grow flex row ">
         <Aside />

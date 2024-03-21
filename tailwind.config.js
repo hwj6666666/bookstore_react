@@ -6,6 +6,9 @@ module.exports = {
       colors: {
         'header-purple':'#6e2381',
       },
+      backgroundImage: {
+        'home': "url('/public/home_bg.webp')",
+      },
     },
   },
   plugins: [],
