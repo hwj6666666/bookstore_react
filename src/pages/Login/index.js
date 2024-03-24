@@ -10,7 +10,7 @@ const Login = () => {
   const onFinish = async (values) => {
     console.log("Received values of form: ", values);
     //触发异步action fetchLogin
-    // await dispatch(fetchLogin(values));
+    await dispatch(fetchLogin(values));
     //1. 跳转到首页
     navigate("/");
     //2.提示一下r户
