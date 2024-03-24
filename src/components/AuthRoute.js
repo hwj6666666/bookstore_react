@@ -7,4 +7,3 @@ import { getToken } from "@/utils";
 export function AuthRoute({ children }) {
   return getToken() ? children : <Navigate to="/login" replace/>;
 }
-
