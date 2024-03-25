@@ -13,7 +13,7 @@ function Aside() {
     "bg-header-purple w-32 my-2 text-white font-bold py-2 px-4 rounded";
 
   return (
-    <aside className="pt-10 items-center w-1/8 bg-transparent p-4 flex flex-col border-r border-gray-300">
+    <aside className="backdrop-blur-lg pt-10 items-center w-1/8 bg-transparent p-4 flex flex-col ">
       <Helmet>
         <link
           rel="stylesheet"

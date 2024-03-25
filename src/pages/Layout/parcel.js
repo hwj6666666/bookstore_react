@@ -1,5 +1,4 @@
-
-
+import MyChart from "@/components/rankChart";
 import React from "react";
 
 function MainParcel() {
@@ -7,7 +6,11 @@ function MainParcel() {
 
   // Perform setup tasks in the useEffect hook
 
-  return <div>this is Parcel</div>;
+  return (
+    <div className="flex items-center justify-center w-full h-full">
+      <MyChart />
+    </div>
+  );
 }
 
-export default MainParcel
+export default MainParcel;
