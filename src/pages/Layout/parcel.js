@@ -7,8 +7,11 @@ function MainParcel() {
   // Perform setup tasks in the useEffect hook
 
   return (
-    <div className="flex items-center justify-center w-full h-full">
-      <MyChart />
+    // <div className="flex items-center justify-center w-full h-full">
+    //   <MyChart />
+    // </div>
+    <div>
+
     </div>
   );
 }

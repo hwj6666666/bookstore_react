@@ -65,7 +65,7 @@ function Aside() {
           className={
             location.pathname === "/parcel" ? activeButtonClass : buttonClass
           }
-          title="Shipping"
+          title="Order"
         >
           <span className="material-symbols-outlined">local_shipping</span>
         </button>
