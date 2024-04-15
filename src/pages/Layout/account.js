@@ -1,5 +1,7 @@
 import React from "react";
 import { Card, Avatar, Typography } from "antd";
+import { Button } from "antd";
+
 const { Title, Text } = Typography;
 
 function Account() {
@@ -30,6 +32,7 @@ function Account() {
         <Title level={5}>Phone</Title>
         <Text>{user.phone}</Text>
       </div>
+      <Button className='text-black border border-black mt-2'type="primary">Edit</Button>
     </Card>
   );
 }

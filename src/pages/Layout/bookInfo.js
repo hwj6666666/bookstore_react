@@ -11,8 +11,12 @@ function BookInfo() {
 
   return (
     <div className="w-full h-full flex flex-row">
-      <div className="w-1/3 flex flex-col ">
-        <img className="w-full " alt={book.name} src={book.picture} />
+      <div className="w-1/3 h-full flex flex-col">
+        <img
+          className="w-full h-2/3 object-cover"
+          alt={book.name}
+          src={book.picture}
+        />
       </div>
       <div className="w-1/3 flex flex-col">
         <Card
@@ -27,10 +31,8 @@ function BookInfo() {
           <p>Price: {book.price}</p>
           <p>ISBN: {book.ISBN}</p>
           <p>Remaining: {book.remaining}</p>
-
-
         </Card>
-        <div >
+        <div>
           <button
             className="rounded-lg border border-white text-white w-1/2 h-12 hover:bg-header-purple"
             onClick={() => {

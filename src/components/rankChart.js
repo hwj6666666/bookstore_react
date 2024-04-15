@@ -8,6 +8,7 @@ function MyChart() {
     var myChart = echarts.init(chartRef.current);
     var option = {
       legend: {
+        show: false,
         top: "bottom",
         textStyle: {
           color: "white",
@@ -27,25 +28,20 @@ function MyChart() {
         {
           label: {
             color: "white",
-            fontSize: 28,
+            fontSize: 14,
           },
           name: "Nightingale Chart",
           type: "pie",
-          radius: [50, 250],
+          radius: [50, 100],
           center: ["50%", "50%"],
           roseType: "area",
           itemStyle: {
             borderRadius: 8,
           },
           data: [
-            { value: 40, name: "rose 1" },
-            { value: 38, name: "rose 2" },
-            { value: 32, name: "rose 3" },
-            { value: 30, name: "rose 4" },
-            { value: 28, name: "rose 5" },
-            { value: 26, name: "rose 6" },
-            { value: 22, name: "rose 7" },
-            { value: 18, name: "rose 8" },
+            { value: 20, name: "Harry Potter and the Prisoner of Azkaban" },
+            { value: 40, name: "Harry Potter and the Chamber of Secrets" },
+            { value: 80, name: "Harry Potter and the Philosopher's Stone" },
           ],
         },
       ],
@@ -56,8 +52,7 @@ function MyChart() {
 
   return (
     <div
-      className="backdrop-blur-lg"
-      style={{ width: 1000, height: 700 }}
+      className="flex justify-center items-center w-full h-full"
       ref={chartRef}
     />
   );
