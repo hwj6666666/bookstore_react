@@ -1,146 +1,152 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Table, Button, Input } from "antd";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCarts } from "@/store/modules/cart";
+import { Table, Button, Checkbox, message } from "antd";
+import { fetchBooks } from "@/store/modules/book";
 
 function MainCart() {
-  const [cartItems, setCartItems] = useState([]);
+  const [selectedKeys, setSelectedKeys] = useState([]);
+  const id = localStorage.getItem("id");
+  const dispatch = useDispatch();
+
+  const carts = useSelector((state) => state.cart.carts);
+  const books = useSelector((state) => state.book.books);
 
   useEffect(() => {
-    setCartItems([
-      {
-        id: 1,
-        name: "Harry Potter and the Philosopher's Stone",
-        price: 10,
-        amount: 5,
-        cover: "/hp1.jpg",
-      },
-      {
-        id: 2,
-        name: "Harry Potter and the Chamber of Secrets",
-        price: 20,
-        amount: 2,
-        cover: "/hp2.jpg",
-      },
-      {
-        id: 2,
-        name: "Harry Potter and the Prisoner of Azkaban",
-        price: 20,
-        amount: 8,
-        cover: "/hp3.jpg",
-      },
-      {
-        id: 2,
-        name: "Harry Potter and the Order of the Phoenix",
-        price: 20,
-        amount: 9,
-        cover: "/hp4.jpg",
-      },
-      {
-        id: 2,
-        name: "Harry Potter and the Goblet of Fire",
-        price: 20,
-        amount: 1,
-        cover: "/hp5.jpg",
-      },
-    ]);
-  }, []);
+    dispatch(fetchBooks());
+    dispatch(fetchCarts(id));
+  }, [dispatch]);
 
-  const handleRemove = (id) => {
-    // Remove the item with the given id from the cart
-    setCartItems(cartItems.filter((item) => item.id !== id));
+  const dataSource = carts.map((cart) => {
+    const book = books.find((b) => b.id === cart.bookId);
+    if (!book) return null;
+    return {
+      id: cart.id,
+      cover: book.imageBase64,
+      name: book.title,
+      price: book.price,
+      quantity: cart.bookNum,
+      total: (book.price * cart.bookNum).toFixed(2),
+      addTime: new Date(cart.addTime).toLocaleString(),
+    };
+  });
+
+  const columns = [
+    {
+      title: "Cover",
+      dataIndex: "cover",
+      key: "cover",
+      render: (text) => (
+        <img src={text} alt="cover" style={{ width: "50px" }} />
+      ),
+    },
+    {
+      title: "Book Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Price",
+      dataIndex: "price",
+      key: "price",
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+    },
+    {
+      title: "Add Time",
+      dataIndex: "addTime",
+      key: "addTime",
+    },
+    {
+      title: "Select",
+      dataIndex: "id",
+      key: "select",
+      render: (text, record) => (
+        <Checkbox onChange={(e) => handleSelect(record.id, e.target.checked)} />
+      ),
+    },
+  ];
+
+  const handleSelect = (id, checked) => {
+    if (checked) {
+      setSelectedKeys((prevKeys) => [...prevKeys, id]);
+    } else {
+      setSelectedKeys((prevKeys) => prevKeys.filter((key) => key !== id));
+    }
   };
 
-const handlePay = (id) => {
-  Modal.info({
-    title: "Choose Payment Method",
-    okText: "Cancel",
-    okButtonProps: { style: { color: "black" } },
-    content: (
-      <div>
-        <Button onClick={() => showPaymentCode("alipay")}>Alipay</Button>
-        <Button
-          style={{ marginLeft: "10px" }}
-          onClick={() => showPaymentCode("wechat")}
-        >
-          WeChat Pay
-        </Button>
-      </div>
-    ),
-  });
-};
+  const handleRemove = () => {
+    console.log("Remove", selectedKeys);
+    fetch("http://localhost:8080/carts/remove", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(selectedKeys),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        dispatch(fetchCarts(id));
+        message.success("Remove successfully");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
-const showPaymentCode = (method) => {
-  let paymentImage;
-  if (method === "alipay") {
-    paymentImage = <img src="path/to/alipay/image.jpg" alt="Alipay QR Code" />;
-  } else if (method === "wechat") {
-    paymentImage = (
-      <img src="path/to/wechat/image.jpg" alt="WeChat Pay QR Code" />
-    );
-  }
+  const userId = localStorage.getItem("id");
+  const handlePay = () => {
+    console.log("Pay", selectedKeys);
+    fetch("http://localhost:8080/orders/pay", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ selectedKeys, userId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        handleRemove();
+        dispatch(fetchCarts(id));
+        message.success("Pay successfully");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
-  Modal.info({
-    title: `${method} Payment QR Code`,
-    okText: "Cancel",
-    okButtonProps: { style: { color: "black" } },
-    content: paymentImage,
-  });
-};
-
-const columns = [
-  {
-    title: "Cover",
-    dataIndex: "cover",
-    key: "cover",
-    render: (text, record) => (
-      <img
-        src={record.cover}
-        alt="Cover"
-        style={{ width: "50px", height: "50px" }}
+  return (
+    <div>
+      <Table
+        columns={columns}
+        dataSource={dataSource}
+        rowKey="id"
+        pagination={{ pageSize: 5 }}
       />
-    ),
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Price",
-    dataIndex: "price",
-    key: "price",
-  },
-  {
-    title: "Amount",
-    dataIndex: "amount",
-    key: "amount",
-  },
-  {
-    title: "Action",
-    key: "action",
-    render: (text, record) => (
-      <span>
-        <Button onClick={() => handleRemove(record.key)}>Remove</Button>
-        <Button
-          style={{ marginLeft: "10px" }}
-          onClick={() => handlePay(record.key)}
-        >
-          Pay
-        </Button>
-      </span>
-    ),
-  },
-];
-
-return (
-  <div>
-    <h1 className="">Cart</h1>
-    <div className="flex justify-center my-4">
-      {/* <Input.Search placeholder="Search..." style={{ width: 200 }} /> */}
-      <Input.Search></Input.Search>
+      <Button
+        className="text-white rounded-lg border border-white text-white w-1/2 h-12 hover:bg-header-purple"
+        onClick={handleRemove}
+      >
+        Remove
+      </Button>
+      <Button
+        className="text-white rounded-lg border border-white text-white w-1/2 h-12 hover:bg-header-purple"
+        onClick={handlePay}
+      >
+        Pay
+      </Button>
     </div>
-    <Table columns={columns} dataSource={cartItems} rowKey="id" />
-  </div>
-);
+  );
 }
 
 export default MainCart;

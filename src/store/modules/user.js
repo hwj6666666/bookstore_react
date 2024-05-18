@@ -1,7 +1,6 @@
 //和用户相关的状态管理
 
 import { createSlice } from "@reduxjs/toolkit";
-import { request } from "@/utils";
 import { setToken as _setToken, getToken } from "@/utils";
 import { getProfileAPI,loginAPI } from "@/apis/user";
 

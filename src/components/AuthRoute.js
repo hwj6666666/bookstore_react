@@ -5,5 +5,7 @@ import { Navigate } from "react-router-dom";
 import { getToken } from "@/utils";
 
 export function AuthRoute({ children }) {
-  return getToken() ? children : <Navigate to="/login" replace/>;
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
+  // return getToken() ? children : <Navigate to="/login" replace/>;
+  return isLoggedIn ? children : <Navigate to="/login" replace/>;
 }

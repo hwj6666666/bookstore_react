@@ -3,6 +3,7 @@ import { Form, Input, Button, Card, message } from "antd";
 import { useDispatch } from "react-redux";
 import { fetchLogin } from "@/store/modules/user";
 import { useNavigate } from "react-router-dom";
+import { fetchBooks } from "@/store/modules/book";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -10,11 +11,15 @@ const Login = () => {
   const onFinish = async (values) => {
     console.log("Received values of form: ", values);
     //触发异步action fetchLogin
-    await dispatch(fetchLogin(values));
+    // await dispatch(fetchLogin(values));
     //1. 跳转到首页
+    localStorage.setItem("isLoggedIn", true);
+    localStorage.setItem("id", 1);
     navigate("/");
     //2.提示一下r户
     message.success("登录成功");
+    dispatch(fetchBooks());
+    console.log("fetchBooks");
   };
 
   return (
