@@ -1,31 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Table, Image, Input, DatePicker } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOrders } from "@/store/modules/order";
-import { fetchCarts } from "@/store/modules/cart";
+import { Card, Row, Col, Pagination, Input, Image, Table, DatePicker } from "antd";
+import { useNavigate } from "react-router-dom";
+import MyChart from "@/components/rankChart";
+import BookCarousel from "@/components/bookCarousel";
 import { fetchBooks } from "@/store/modules/book";
-import dayjs from "dayjs";
-import isBetween from "dayjs/plugin/isBetween";
-
-dayjs.extend(isBetween);
+import { fetchAllOrders, fetchOrders } from "@/store/modules/order";
+import moment from "moment";
 
 const { RangePicker } = DatePicker;
 const { Search } = Input;
 
-function MainParcel() {
+function ParcelManage() {
   const id = localStorage.getItem("id");
   const dispatch = useDispatch();
 
   const orders = useSelector((state) => state.order.orders);
   const books = useSelector((state) => state.book.books);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState([null, null]);
 
   useEffect(() => {
     dispatch(fetchBooks());
-    dispatch(fetchCarts(id));
-    dispatch(fetchOrders(id));
+    dispatch(fetchAllOrders());
   }, [dispatch]);
 
   // Helper function to get book details by bookId
@@ -33,35 +30,12 @@ function MainParcel() {
 
   // Filter orders based on search term and date range
   const filteredOrders = orders.filter((order) => {
-    const isInDateRange = !dateRange[0] || (dayjs(order.payTime).isBetween(dateRange[0], dateRange[1], null, '[]'));
+    const isInDateRange = !dateRange[0] || (moment(order.payTime).isBetween(dateRange[0], dateRange[1], null, '[]'));
     const hasBookTitle = order.orderItems.some((item) => {
       const book = getBookById(item.bookId);
       return book ? book.title.toLowerCase().includes(searchTerm.toLowerCase()) : false;
     });
     return isInDateRange && (hasBookTitle || !searchTerm);
-  });
-
-  // Calculate statistics
-  const bookStatistics = {};
-  let totalBooks = 0;
-  let totalAmount = 0;
-
-  filteredOrders.forEach((order) => {
-    order.orderItems.forEach((item) => {
-      const book = getBookById(item.bookId);
-      if (book) {
-        if (!bookStatistics[book.title]) {
-          bookStatistics[book.title] = {
-            quantity: 0,
-            totalPrice: 0,
-          };
-        }
-        bookStatistics[book.title].quantity += item.bookNum;
-        bookStatistics[book.title].totalPrice += book.price * item.bookNum;
-        totalBooks += item.bookNum;
-        totalAmount += book.price * item.bookNum;
-      }
-    });
   });
 
   const columns = [
@@ -149,56 +123,27 @@ function MainParcel() {
 
   return (
     <div className="h-full w-full flex flex-col items-center">
-      <div className="w-full flex justify-between mb-4">
-        <div className="w-48 mr-2">
-          <RangePicker
-            onChange={(dates) => setDateRange(dates)}
-            format="YYYY-MM-DD"
-          />
-        </div>
+      <div className="w-2/3 mb-4">
+        <RangePicker
+          className="mr-2"
+          onChange={(dates) => setDateRange(dates)}
+          format="YYYY-MM-DD"
+        />
         <Search
           placeholder="Search by book title"
           onSearch={(value) => setSearchTerm(value)}
           style={{ width: 200 }}
         />
       </div>
-      <div className="w-full flex">
-        <div className="w-1/2 pr-2">
-          <Table
-            columns={columns}
-            dataSource={filteredOrders}
-            expandable={{ expandedRowRender }}
-            rowKey="id"
-          />
-        </div>
-        <div className="w-1/2 pl-2">
-          <div className="mb-4">
-            <h3>Total Books: {totalBooks}</h3>
-            <h3>Total Amount: ${totalAmount.toFixed(2)}</h3>
-          </div>
-          <Table
-            columns={[
-              { title: "Book Title", dataIndex: "title", key: "title" },
-              { title: "Quantity", dataIndex: "quantity", key: "quantity" },
-              {
-                title: "Total Price",
-                dataIndex: "totalPrice",
-                key: "totalPrice",
-                render: (text) => `$${text.toFixed(2)}`,
-              },
-            ]}
-            dataSource={Object.keys(bookStatistics).map((title) => ({
-              title,
-              quantity: bookStatistics[title].quantity,
-              totalPrice: bookStatistics[title].totalPrice,
-            }))}
-            pagination={false}
-            rowKey="title"
-          />
-        </div>
-      </div>
+      <Table
+        columns={columns}
+        dataSource={filteredOrders}
+        expandable={{ expandedRowRender }}
+        rowKey="id"
+        className="w-2/3"
+      />
     </div>
   );
 }
 
-export default MainParcel;
+export default ParcelManage;

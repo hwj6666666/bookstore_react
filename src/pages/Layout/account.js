@@ -1,11 +1,20 @@
 import React from "react";
 import { Card, Avatar, Typography } from "antd";
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const { Title, Text } = Typography;
 
 function Account() {
   // Replace with your own data
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("id");
+    navigate("/login");
+  };
+
   const user = {
     avatar: "/skeleton.png",
     name: "Hu Wenjie",
@@ -32,7 +41,16 @@ function Account() {
         <Title level={5}>Phone</Title>
         <Text>{user.phone}</Text>
       </div>
-      <Button className='text-black border border-black mt-2'type="primary">Edit</Button>
+      <Button className="text-black border border-black mt-2" type="primary">
+        Edit
+      </Button>
+      <Button
+        onClick={handleLogout}
+        className="ml-5 text-black border border-black mt-2"
+        type="primary"
+      >
+        Log out
+      </Button>
     </Card>
   );
 }

@@ -12,6 +12,12 @@ import AccountPage from "@/pages/Layout/account";
 import MainCart from "@/pages/Layout/cart";
 import MainParcel from "@/pages/Layout/parcel";
 import BookInfo from "@/pages/Layout/bookInfo";
+import Manage from "@/pages/Layout/manage";
+import UserManage from "@/components/manage/userManage";
+import StatisticsManage from "@/components/manage/statisticsManage";
+import BookManage from "@/components/manage/bookManage";
+import ParcelManage from "@/components/manage/parcelManage";
+import { ManageRoute } from "@/components/ManageRoute";
 
 //配置路由实例
 
@@ -58,6 +64,36 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/manage",
+    element: (
+      <ManageRoute>
+        <Manage />,
+      </ManageRoute>
+    ),
+    children: [
+      {
+        index: true,
+        element: <UserManage />,
+      },
+      {
+        path: "book",
+        element: <BookManage />,
+      },
+      {
+        path: "order",
+        element: <ParcelManage />,
+      },
+      {
+        path: "user",
+        element: <UserManage />,
+      },
+      {
+        path: "statistic",
+        element: <StatisticsManage />,
+      },
+    ],
   },
 ]);
 

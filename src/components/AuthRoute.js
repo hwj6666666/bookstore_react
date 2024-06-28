@@ -6,6 +6,5 @@ import { getToken } from "@/utils";
 
 export function AuthRoute({ children }) {
   const isLoggedIn = localStorage.getItem("isLoggedIn");
-  // return getToken() ? children : <Navigate to="/login" replace/>;
   return isLoggedIn ? children : <Navigate to="/login" replace/>;
 }

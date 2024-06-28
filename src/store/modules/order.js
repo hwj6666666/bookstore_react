@@ -24,7 +24,15 @@ const fetchOrders = (id) => {
     dispatch(addOrders(result.data));
   };
 };
-export { fetchOrders };
+
+const fetchAllOrders = () => {
+  return async (dispatch) => {
+    const response = await fetch(`http://localhost:8080/orders`);
+    const result = await response.json();
+    dispatch(addOrders(result.data));
+  };
+};
+export { fetchOrders, fetchAllOrders };
 
 const orderReducer = orderStore.reducer;
 export default orderReducer;

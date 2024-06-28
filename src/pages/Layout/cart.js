@@ -84,7 +84,6 @@ function MainCart() {
   };
 
   const handleRemove = () => {
-    console.log("Remove", selectedKeys);
     fetch("http://localhost:8080/carts/remove", {
       method: "POST",
       headers: {
@@ -115,10 +114,13 @@ function MainCart() {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Success:", data);
-        handleRemove();
-        dispatch(fetchCarts(id));
-        message.success("Pay successfully");
+        if (data.data) {
+          dispatch(fetchCarts(id));
+          handleRemove();
+          message.success("Pay successfully");
+        } else {
+          message.error("Not enough stock");
+        }
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -126,7 +128,7 @@ function MainCart() {
   };
 
   return (
-    <div>
+    <div className="w-full h-full">
       <Table
         columns={columns}
         dataSource={dataSource}

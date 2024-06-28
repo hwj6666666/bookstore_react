@@ -9,6 +9,7 @@ import { fetchBooks } from "@/store/modules/book";
 function MainBookstore() {
   const { books } = useSelector((state) => state.book);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
   const pageSize = 8;
 
   const handleChange = (page) => {
@@ -16,17 +17,23 @@ function MainBookstore() {
   };
   const navigate = useNavigate();
 
-
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(fetchBooks());
   }, [dispatch]);
 
-  const booksToShow = books.slice(
+  // 根据搜索关键字过滤书籍列表
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // 分页显示过滤后的书籍列表
+  const booksToShow = filteredBooks.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
-  if(!books) return <div>Loading</div>
+
+  if (!books) return <div>Loading</div>;
 
   return (
     <div className="border border-black flex w-full h-full">
@@ -35,6 +42,10 @@ function MainBookstore() {
         <Input.Search
           className="mt-8 w-2/3"
           placeholder="Search for your favorite books"
+          onSearch={(value) => {
+            setSearchTerm(value);
+            setCurrentPage(1); // 搜索后重置当前页码
+          }}
         />
         <MyChart />
       </div>
@@ -49,14 +60,14 @@ function MainBookstore() {
                 cover={
                   <img
                     className="h-40 object-cover"
-                    alt={item.name}
+                    alt={item.title}
                     src={item.imageBase64}
                   />
                 }
               >
                 <Card.Meta
                   className="text-center"
-                  title={item.name}
+                  title={item.title}
                   description={`Price: ${item.price} Stock: ${item.stock}`}
                 />
               </Card>
@@ -67,7 +78,7 @@ function MainBookstore() {
           <Pagination
             current={currentPage}
             onChange={handleChange}
-            total={books.length}
+            total={filteredBooks.length}
             pageSize={pageSize}
             showSizeChanger={false}
           />

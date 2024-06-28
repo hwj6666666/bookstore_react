@@ -31,11 +31,28 @@ function BookInfo() {
       .then((response) => response.json())
       .then((data) => {
         console.log(data);
+        dispatch(fetchBooks());
       })
       .catch((error) => {
         console.error("Error:", error);
       });
-      message.success("Add to cart successfully");
+    message.success("Add to cart successfully");
+  };
+
+  const handleBuy = () => {
+    fetch("http://localhost:8080/orders/payOne", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ bookId: book.id, userId: userId }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        dispatch(fetchBooks());
+        message.success("Pay successfully");
+      })
+      .catch((error) => {});
   };
 
   if (!book) return <div>Loading</div>;
@@ -66,13 +83,25 @@ function BookInfo() {
         <div>
           <button
             className="rounded-lg border border-white text-white w-1/2 h-12 hover:bg-header-purple"
-            onClick={handleAdd}
+            onClick={() => {
+              if (book.stock <= 0) {
+                message.error("Out of stock");
+              } else {
+                handleAdd();
+              }
+            }}
           >
             Add to Cart
           </button>
           <button
             className="rounded-lg border border-white text-white w-1/2 h-12 hover:bg-header-purple"
-            onClick={() => {}}
+            onClick={() => {
+              if (book.stock <= 0) {
+                message.error("Out of stock");
+              } else {
+                handleBuy();
+              }
+            }}
           >
             Buy Now
           </button>
