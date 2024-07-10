@@ -136,13 +136,13 @@ function MainCart() {
         pagination={{ pageSize: 5 }}
       />
       <Button
-        className="text-white rounded-lg border border-white text-white w-1/2 h-12 hover:bg-header-purple"
+        className="rounded-lg border border-white text-black w-1/2 h-12 hover:bg-header-purple"
         onClick={handleRemove}
       >
         Remove
       </Button>
       <Button
-        className="text-white rounded-lg border border-white text-white w-1/2 h-12 hover:bg-header-purple"
+        className="rounded-lg border border-white text-black w-1/2 h-12 hover:bg-header-purple"
         onClick={handlePay}
       >
         Pay
